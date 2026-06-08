@@ -1,0 +1,20 @@
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // الخدمات: القراءة مفتوحة للعامة، بينما الكتابة والتعديل مغلقة تماماً للـ Client لحمايتها من الحقن الخارجي والتزوير.
+    // خادم Node.js (Admin SDK) هو المخوّل الوحيد بإضافة الخدمات ومعالجتها متخطياً هذه القيود بأمان.
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if false; 
+    }
+    
+    // المدفوعات: مغلقة بالكامل من جهة المتصفح لضمان عدم حدوث تلاعب في الفواتير أو الفواتير المزيفة.
+    match /payments/{paymentId} {
+      allow read, write: if false;
+    }
+  }
+}
+
+```
